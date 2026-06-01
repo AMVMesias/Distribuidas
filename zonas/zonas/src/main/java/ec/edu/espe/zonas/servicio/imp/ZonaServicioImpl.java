@@ -1,5 +1,7 @@
 package ec.edu.espe.zonas.servicio.imp;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -12,10 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 import ec.edu.espe.zonas.dtos.ZonaRequestDto;
 import ec.edu.espe.zonas.dtos.ZonaResponseDto;
 import ec.edu.espe.zonas.models.Zona;
+import ec.edu.espe.zonas.models.TipoZona;
 import ec.edu.espe.zonas.repositories.ZonaRepositorio;
 import ec.edu.espe.zonas.servicio.ZonaServicio;
-
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class ZonaServicioImpl implements ZonaServicio {
@@ -26,24 +27,33 @@ public class ZonaServicioImpl implements ZonaServicio {
     public List<ZonaResponseDto> listarZonas() {
         return zonaRepositorio.findAll()
                 .stream()
+                .filter(Zona::isActive)
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ZonaResponseDto crearZona(ZonaRequestDto zona) {
-        if (zonaRepositorio.existsByNombre(zona.getNombre())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona con el mismo nombre");
+        // Validamos en memoria que no exista otra zona ACTIVA con el mismo nombre
+        boolean existeNombreActivo = zonaRepositorio.findAll().stream()
+                .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.isActive());
+        if (existeNombreActivo) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo nombre");
+        }
+
+        String codigo = generarCodigoZona(zona.getNombre(), zona.getTipo());
+        // Validamos en memoria que no exista otra zona ACTIVA con el mismo código
+        boolean existeCodigoActivo = zonaRepositorio.findAll().stream()
+                .anyMatch(z -> z.getCodigo().equals(codigo) && z.isActive());
+        if (existeCodigoActivo) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo código: " + codigo);
         }
 
         Zona objZona = new Zona();
 
         objZona.setNombre(zona.getNombre());
         objZona.setDescripcion(zona.getDescripcion());
-        
-        // Pass the TipoZona to the code generator to make it dynamic
-        objZona.setCodigo(generarCodigoZona(zona.getTipo().name())); 
-        
+        objZona.setCodigo(codigo);
         objZona.setActive(true);
         objZona.setTipoZona(zona.getTipo());
         objZona.setFechaCreacion(java.time.LocalDateTime.now());
@@ -58,8 +68,12 @@ public class ZonaServicioImpl implements ZonaServicio {
         Zona objZona = zonaRepositorio.findById(idZona)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona no encontrada"));
 
-        if (!objZona.getNombre().equals(zona.getNombre()) && zonaRepositorio.existsByNombre(zona.getNombre())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona con el mismo nombre");
+        if (!objZona.getNombre().equalsIgnoreCase(zona.getNombre())) {
+            boolean existeNombreActivo = zonaRepositorio.findAll().stream()
+                    .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.isActive());
+            if (existeNombreActivo) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo nombre");
+            }
         }
 
         objZona.setNombre(zona.getNombre());
@@ -94,17 +108,23 @@ public class ZonaServicioImpl implements ZonaServicio {
                 .build();
     }
 
-    private String generarCodigoZona(String prefijoTipo) {
-        // Formato esperado: TICK-[TIPO]-23-YYYYMMDD-HHMMSS
-        // Ejemplo: TICK-VIP-23-20260520-104237
+    private String generarCodigoZona(String nombre, TipoZona tipoZona) {
+        String inicialNombre = nombre.substring(0, 1).toUpperCase();
+        String inicialTipo = tipoZona.name().substring(0, 1).toUpperCase();
         
-        java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+        List<Zona> todasLasZonas = zonaRepositorio.findAll();
+        
+        // Secuenciales basados únicamente en zonas activas
+        long secuencialTipo = todasLasZonas.stream()
+                .filter(z -> z.getTipoZona() == tipoZona && z.isActive())
+                .count() + 1L;
+        long secuencialGlobal = todasLasZonas.stream()
+                .filter(Zona::isActive)
+                .count() + 1L;
+                
+        LocalDateTime ahora = LocalDateTime.now();
         String fecha = ahora.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String hora = ahora.format(DateTimeFormatter.ofPattern("HHmmss"));
-        
-        // Acortamos el tipo a 3 letras si es muy largo para que no quede gigante (ej. VIP, REG, EXT)
-        String prefijoCorto = prefijoTipo.length() >= 3 ? prefijoTipo.substring(0, 3).toUpperCase() : prefijoTipo.toUpperCase();
-        
-        return String.format("TICK-%s-23-%s-%s", prefijoCorto, fecha, hora);
+        return String.format("TICK-%s%s%d-%d-%s-%s", inicialNombre, inicialTipo, secuencialTipo, secuencialGlobal, fecha, hora);
     }
 }

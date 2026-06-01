@@ -36,10 +36,10 @@ public class Zona {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false, length = 32)
+    @Column(nullable = false, length = 32)
     private String codigo;
 
-    @Column(unique = true, nullable = false, length = 32)
+    @Column(nullable = false, length = 32)
     private String nombre;
 
     @Column(length = 256)
