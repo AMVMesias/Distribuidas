@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: zonas-postgres
+    environment:
+      POSTGRES_DB: zonas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zonas-network
+
+  app:
+    build: .
+    container_name: zonas-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/zonas
+    ports:
+      - '8080:8080'
+    networks:
+      - zonas-network
+
+networks:
+  zonas-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
