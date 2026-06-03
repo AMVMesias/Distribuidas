@@ -2,10 +2,13 @@ package ec.edu.espe.zonas.dtos;
 
 import java.util.UUID;
 
+import ec.edu.espe.zonas.models.EstadoEspacio;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,13 +22,26 @@ import ec.edu.espe.zonas.models.TipoEspacio;
 @AllArgsConstructor
 public class EspacioRequestDto {
 
+    @NotBlank(message = "El codigo es obligatorio")
+    private String codigo;
+
     @NotNull(message = "El ID de la zona es obligatorio")
-    @NotBlank(message = "El ID de la zona no puede estar vacio")
     private UUID idZona;
 
-    @Enumerated(EnumType.STRING)
-    @NotBlank(message = "El estado es obligatorio")
+    @NotBlank(message = "La descripcion es obligatoria")
     private String descripcion;
 
+    @NotNull(message = "El tipo es obligatorio")
+    @Enumerated(EnumType.STRING)
     private TipoEspacio tipo;
+
+    @NotNull(message = "La capacidad es obligatoria")
+    @Min(1)
+    @Max(300)
+    private Integer capacidad;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoEspacio estado;
+
+
 }

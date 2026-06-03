@@ -52,6 +52,9 @@ public class Zona {
     @Column(nullable = false)
     private TipoZona tipoZona;
 
+    @Column
+    private Integer capacidad;
+
     @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Espacio> espacios;
 

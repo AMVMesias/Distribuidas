@@ -26,4 +26,6 @@ public class ZonaRequestDto {
     @Enumerated(EnumType.STRING)
     private TipoZona tipo;
 
+    private Integer capacidad;
+
 }

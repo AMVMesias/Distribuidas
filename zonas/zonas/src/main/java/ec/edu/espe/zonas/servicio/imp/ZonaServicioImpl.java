@@ -56,6 +56,7 @@ public class ZonaServicioImpl implements ZonaServicio {
         objZona.setCodigo(codigo);
         objZona.setActive(true);
         objZona.setTipoZona(zona.getTipo());
+        objZona.setCapacidad(zona.getCapacidad());
         objZona.setFechaCreacion(java.time.LocalDateTime.now());
         objZona.setFechaActualizacion(java.time.LocalDateTime.now());
         zonaRepositorio.save(objZona);
@@ -79,6 +80,7 @@ public class ZonaServicioImpl implements ZonaServicio {
         objZona.setNombre(zona.getNombre());
         objZona.setDescripcion(zona.getDescripcion());
         objZona.setTipoZona(zona.getTipo());
+        objZona.setCapacidad(zona.getCapacidad());
         objZona.setFechaActualizacion(java.time.LocalDateTime.now());
         zonaRepositorio.save(objZona);
 
@@ -103,6 +105,7 @@ public class ZonaServicioImpl implements ZonaServicio {
                 .descripcion(objZona.getDescripcion())
                 .active(objZona.isActive())
                 .tipoZona(objZona.getTipoZona())
+                .capacidad(objZona.getCapacidad())
                 .espacios(objZona.getEspacios())
                 .fechaCreacion(objZona.getFechaCreacion())
                 .build();

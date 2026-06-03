@@ -8,8 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import ec.edu.espe.zonas.models.EstadoEspacio;
 import ec.edu.espe.zonas.models.TipoEspacio;
-import ec.edu.espe.zonas.models.Zona;
 
 @Data
 @AllArgsConstructor
@@ -20,15 +20,20 @@ public class EspaciosResponseDto {
 
     private String codigo;
 
-    private Zona zona;
-
     private String descripcion;
 
     private TipoEspacio tipo;
 
-    private boolean estado;
+    private EstadoEspacio estado;
+
+    private boolean activo;
+
+    private UUID idZona;
+
+    private String nombreZona;
 
     private LocalDateTime fechaCreacion;
 
-    private LocalDateTime fechaActualizacion;
+    private LocalDateTime fechaModificacion;
+
 }
