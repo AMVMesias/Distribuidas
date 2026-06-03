@@ -1,4 +1,4 @@
-package ec.edu.espe.zonas.models;
+package ec.edu.espe.zonas.entidades;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,14 +46,14 @@ public class Zona {
     private String descripcion;
 
     @Column
-    private boolean active;
+    private int estado; //1: activo - 0: inactivo
+
+    @Column
+    private int capacidad;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoZona tipoZona;
-
-    @Column
-    private Integer capacidad;
+    private TipoZona tipo;
 
     @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Espacio> espacios;
@@ -62,5 +62,5 @@ public class Zona {
     private LocalDateTime fechaCreacion;
 
     @Column
-    private LocalDateTime fechaActualizacion;
+    private LocalDateTime fechaModificacion;
 }

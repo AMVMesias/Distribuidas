@@ -9,8 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import ec.edu.espe.zonas.models.Espacio;
-import ec.edu.espe.zonas.models.TipoZona;
+import ec.edu.espe.zonas.entidades.Espacio;
+import ec.edu.espe.zonas.entidades.TipoZona;
 
 @Data
 @Builder
@@ -25,15 +25,15 @@ public class ZonaResponseDto {
 
     private String descripcion;
 
-    private boolean active;
+    private int estado;
 
-    private TipoZona tipoZona;
+    private TipoZona tipo;
 
-    private Integer capacidad;
+    private int capacidad;
 
     private List<Espacio> espacios;
 
     private LocalDateTime fechaCreacion;
 
-    private LocalDateTime fechaActualizacion;
+    private LocalDateTime fechaModificacion;
 }

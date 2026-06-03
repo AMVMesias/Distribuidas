@@ -2,7 +2,7 @@ package ec.edu.espe.zonas.dtos;
 
 import java.util.UUID;
 
-import ec.edu.espe.zonas.models.EstadoEspacio;
+import ec.edu.espe.zonas.entidades.EstadoEspacio;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import ec.edu.espe.zonas.models.TipoEspacio;
+import ec.edu.espe.zonas.entidades.TipoEspacio;
 
 @Data
 @Builder

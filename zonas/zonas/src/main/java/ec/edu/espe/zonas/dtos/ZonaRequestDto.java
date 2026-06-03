@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import ec.edu.espe.zonas.models.TipoZona;
+import ec.edu.espe.zonas.entidades.TipoZona;
 
 @Data
 @Builder
@@ -26,6 +26,6 @@ public class ZonaRequestDto {
     @Enumerated(EnumType.STRING)
     private TipoZona tipo;
 
-    private Integer capacidad;
+    private int capacidad;
 
 }

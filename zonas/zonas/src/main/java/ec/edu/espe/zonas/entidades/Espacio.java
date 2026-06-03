@@ -1,4 +1,4 @@
-package ec.edu.espe.zonas.models;
+package ec.edu.espe.zonas.entidades;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

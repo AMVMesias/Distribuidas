@@ -1,4 +1,4 @@
-package ec.edu.espe.zonas.models;
+package ec.edu.espe.zonas.entidades;
 
 public enum TipoEspacio {
     MOTO,

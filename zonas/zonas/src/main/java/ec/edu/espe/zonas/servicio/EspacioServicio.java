@@ -2,7 +2,7 @@ package ec.edu.espe.zonas.servicio;
 
 import ec.edu.espe.zonas.dtos.EspacioRequestDto;
 import ec.edu.espe.zonas.dtos.EspaciosResponseDto;
-import ec.edu.espe.zonas.models.EstadoEspacio;
+import ec.edu.espe.zonas.entidades.EstadoEspacio;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public interface EspacioServicio {
 
     EspaciosResponseDto cambiarEstado(UUID idEspacio, EstadoEspacio estado);
 
-    List<EspaciosResponseDto> obtenerEspacioPoeEstado(EstadoEspacio estado);
+    List<EspaciosResponseDto> obtenerEspacioPorEstado(EstadoEspacio estado);
 
     List<EspaciosResponseDto> obtenerEspacioPorZonaEsgtado(EstadoEspacio estado);
 

@@ -1,7 +1,7 @@
 package ec.edu.espe.zonas;
 
 import ec.edu.espe.zonas.dtos.ZonaRequestDto;
-import ec.edu.espe.zonas.models.TipoZona;
+import ec.edu.espe.zonas.entidades.TipoZona;
 import ec.edu.espe.zonas.servicio.ZonaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -105,7 +105,7 @@ public class TestRunner implements CommandLineRunner {
             } else {
                 for (var z : zonas) {
                     System.out.printf("- ID: %s | [%s] %s | Tipo: %s | Activa: %s%n", 
-                            z.getId(), z.getCodigo(), z.getNombre(), z.getTipoZona(), z.isActive());
+                            z.getId(), z.getCodigo(), z.getNombre(), z.getTipo(), z.getEstado() == 1);
                 }
             }
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class TestRunner implements CommandLineRunner {
             System.out.println("   ID: " + respuesta.getId());
             System.out.println("   Nombre: " + respuesta.getNombre());
             System.out.println("   Descripción: " + respuesta.getDescripcion());
-            System.out.println("   Tipo: " + respuesta.getTipoZona());
+            System.out.println("   Tipo: " + respuesta.getTipo());
 
         } catch (IllegalArgumentException e) {
             System.out.println("\nERROR: Formato de ID o Tipo de Zona no es válido.");

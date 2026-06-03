@@ -13,8 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ec.edu.espe.zonas.dtos.ZonaRequestDto;
 import ec.edu.espe.zonas.dtos.ZonaResponseDto;
-import ec.edu.espe.zonas.models.Zona;
-import ec.edu.espe.zonas.models.TipoZona;
+import ec.edu.espe.zonas.entidades.Zona;
+import ec.edu.espe.zonas.entidades.TipoZona;
 import ec.edu.espe.zonas.repositories.ZonaRepositorio;
 import ec.edu.espe.zonas.servicio.ZonaServicio;
 
@@ -27,7 +27,7 @@ public class ZonaServicioImpl implements ZonaServicio {
     public List<ZonaResponseDto> listarZonas() {
         return zonaRepositorio.findAll()
                 .stream()
-                .filter(Zona::isActive)
+                .filter(z -> z.getEstado() == 1)
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
@@ -36,7 +36,7 @@ public class ZonaServicioImpl implements ZonaServicio {
     public ZonaResponseDto crearZona(ZonaRequestDto zona) {
         // Validamos en memoria que no exista otra zona ACTIVA con el mismo nombre
         boolean existeNombreActivo = zonaRepositorio.findAll().stream()
-                .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.isActive());
+                .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.getEstado() == 1);
         if (existeNombreActivo) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo nombre");
         }
@@ -44,7 +44,7 @@ public class ZonaServicioImpl implements ZonaServicio {
         String codigo = generarCodigoZona(zona.getNombre(), zona.getTipo());
         // Validamos en memoria que no exista otra zona ACTIVA con el mismo código
         boolean existeCodigoActivo = zonaRepositorio.findAll().stream()
-                .anyMatch(z -> z.getCodigo().equals(codigo) && z.isActive());
+                .anyMatch(z -> z.getCodigo().equals(codigo) && z.getEstado() == 1);
         if (existeCodigoActivo) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo código: " + codigo);
         }
@@ -54,11 +54,11 @@ public class ZonaServicioImpl implements ZonaServicio {
         objZona.setNombre(zona.getNombre());
         objZona.setDescripcion(zona.getDescripcion());
         objZona.setCodigo(codigo);
-        objZona.setActive(true);
-        objZona.setTipoZona(zona.getTipo());
+        objZona.setEstado(1);
+        objZona.setTipo(zona.getTipo());
         objZona.setCapacidad(zona.getCapacidad());
         objZona.setFechaCreacion(java.time.LocalDateTime.now());
-        objZona.setFechaActualizacion(java.time.LocalDateTime.now());
+        objZona.setFechaModificacion(java.time.LocalDateTime.now());
         zonaRepositorio.save(objZona);
 
         return toResponse(objZona);
@@ -71,7 +71,7 @@ public class ZonaServicioImpl implements ZonaServicio {
 
         if (!objZona.getNombre().equalsIgnoreCase(zona.getNombre())) {
             boolean existeNombreActivo = zonaRepositorio.findAll().stream()
-                    .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.isActive());
+                    .anyMatch(z -> z.getNombre().equalsIgnoreCase(zona.getNombre()) && z.getEstado() == 1);
             if (existeNombreActivo) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una zona activa con el mismo nombre");
             }
@@ -79,9 +79,9 @@ public class ZonaServicioImpl implements ZonaServicio {
 
         objZona.setNombre(zona.getNombre());
         objZona.setDescripcion(zona.getDescripcion());
-        objZona.setTipoZona(zona.getTipo());
+        objZona.setTipo(zona.getTipo());
         objZona.setCapacidad(zona.getCapacidad());
-        objZona.setFechaActualizacion(java.time.LocalDateTime.now());
+        objZona.setFechaModificacion(java.time.LocalDateTime.now());
         zonaRepositorio.save(objZona);
 
         return toResponse(objZona);
@@ -91,10 +91,10 @@ public class ZonaServicioImpl implements ZonaServicio {
     public boolean activarDesactivar(UUID idZona) {
         Zona objZona = zonaRepositorio.findById(idZona)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona no encontrada"));
-        objZona.setActive(!objZona.isActive());
-        objZona.setFechaActualizacion(java.time.LocalDateTime.now());
+        objZona.setEstado(objZona.getEstado() == 1 ? 0 : 1);
+        objZona.setFechaModificacion(java.time.LocalDateTime.now());
         zonaRepositorio.save(objZona);
-        return objZona.isActive();
+        return objZona.getEstado() == 1;
     }
 
     private ZonaResponseDto toResponse(Zona objZona) {
@@ -103,8 +103,8 @@ public class ZonaServicioImpl implements ZonaServicio {
                 .codigo(objZona.getCodigo())
                 .nombre(objZona.getNombre())
                 .descripcion(objZona.getDescripcion())
-                .active(objZona.isActive())
-                .tipoZona(objZona.getTipoZona())
+                .estado(objZona.getEstado())
+                .tipo(objZona.getTipo())
                 .capacidad(objZona.getCapacidad())
                 .espacios(objZona.getEspacios())
                 .fechaCreacion(objZona.getFechaCreacion())
@@ -119,10 +119,10 @@ public class ZonaServicioImpl implements ZonaServicio {
         
         // Secuenciales basados únicamente en zonas activas
         long secuencialTipo = todasLasZonas.stream()
-                .filter(z -> z.getTipoZona() == tipoZona && z.isActive())
+                .filter(z -> z.getTipo() == tipoZona && z.getEstado() == 1)
                 .count() + 1L;
         long secuencialGlobal = todasLasZonas.stream()
-                .filter(Zona::isActive)
+                .filter(z -> z.getEstado() == 1)
                 .count() + 1L;
                 
         LocalDateTime ahora = LocalDateTime.now();

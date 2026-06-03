@@ -8,8 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import ec.edu.espe.zonas.models.EstadoEspacio;
-import ec.edu.espe.zonas.models.TipoEspacio;
+import ec.edu.espe.zonas.entidades.EstadoEspacio;
+import ec.edu.espe.zonas.entidades.TipoEspacio;
 
 @Data
 @AllArgsConstructor

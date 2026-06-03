@@ -2,7 +2,7 @@ package ec.edu.espe.zonas.utils;
 
 import ec.edu.espe.zonas.dtos.EspacioRequestDto;
 import ec.edu.espe.zonas.dtos.EspaciosResponseDto;
-import ec.edu.espe.zonas.models.Espacio;
+import ec.edu.espe.zonas.entidades.Espacio;
 import org.springframework.stereotype.Component;
 
 @Component

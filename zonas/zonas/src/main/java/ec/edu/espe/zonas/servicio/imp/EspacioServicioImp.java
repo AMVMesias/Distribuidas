@@ -2,9 +2,9 @@ package ec.edu.espe.zonas.servicio.imp;
 
 import ec.edu.espe.zonas.dtos.EspacioRequestDto;
 import ec.edu.espe.zonas.dtos.EspaciosResponseDto;
-import ec.edu.espe.zonas.models.Espacio;
-import ec.edu.espe.zonas.models.EstadoEspacio;
-import ec.edu.espe.zonas.models.Zona;
+import ec.edu.espe.zonas.entidades.Espacio;
+import ec.edu.espe.zonas.entidades.EstadoEspacio;
+import ec.edu.espe.zonas.entidades.Zona;
 import ec.edu.espe.zonas.repositories.EspacioRepositorio;
 import ec.edu.espe.zonas.repositories.ZonaRepositorio;
 import ec.edu.espe.zonas.servicio.EspacioServicio;
@@ -68,7 +68,7 @@ public class EspacioServicioImp implements EspacioServicio {
     }
 
     @Override
-    public List<EspaciosResponseDto> obtenerEspacioPoeEstado(EstadoEspacio estado) {
+    public List<EspaciosResponseDto> obtenerEspacioPorEstado(EstadoEspacio estado) {
         return List.of();
     }
 
